@@ -1,10 +1,6 @@
 # Agent‑Ready Architecture: The Capability Bus Pattern
 
-**David Ash**
-
-[github.com/dash-](github.com/dash-)
-
-February 2026
+**David Ash** · [github.com/dash-](https://github.com/dash-) · February 2026
 
 ---
 
@@ -712,7 +708,7 @@ The reference implementation accompanies this paper:
 
 - **GitHub:** [`github.com/dash-/capability-bus`](https://github.com/dash-/capability-bus) — Core `CapabilityBus` class, React hooks (`useCapabilityBus`, `useAgentContext`), example capabilities, and a working demo application.
 
-See the repository's [Quickstart Guide](../docs/quickstart.md), [API Reference](../docs/api-reference.md), [Integration Examples](../docs/integration-examples.md), and [Agent Bridge Tutorial](../docs/tutorial-agent-bridge.md).
+See the repository's [Quickstart Guide](./quickstart.md), [API Reference](./api-reference.md), [Integration Examples](./integration-examples.md), and [Agent Bridge Tutorial](./tutorial-agent-bridge.md).
 
 ---
 
