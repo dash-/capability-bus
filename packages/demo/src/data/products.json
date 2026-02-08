@@ -1,0 +1,66 @@
+[
+  {
+    "id": "prod_blue_shirt",
+    "name": "Classic Blue Shirt",
+    "description": "A comfortable cotton button-down shirt in classic blue.",
+    "price": 39.99,
+    "imageUrl": "https://placehold.co/300x300/3b82f6/white?text=Blue+Shirt",
+    "category": "clothing"
+  },
+  {
+    "id": "prod_running_shoes",
+    "name": "Trail Running Shoes",
+    "description": "Lightweight trail running shoes with excellent grip.",
+    "price": 89.99,
+    "imageUrl": "https://placehold.co/300x300/22c55e/white?text=Running+Shoes",
+    "category": "footwear"
+  },
+  {
+    "id": "prod_leather_wallet",
+    "name": "Leather Bifold Wallet",
+    "description": "Genuine leather wallet with RFID blocking technology.",
+    "price": 29.99,
+    "imageUrl": "https://placehold.co/300x300/a16207/white?text=Wallet",
+    "category": "accessories"
+  },
+  {
+    "id": "prod_wireless_earbuds",
+    "name": "Wireless Earbuds Pro",
+    "description": "Noise-cancelling wireless earbuds with 24hr battery.",
+    "price": 79.99,
+    "imageUrl": "https://placehold.co/300x300/6366f1/white?text=Earbuds",
+    "category": "electronics"
+  },
+  {
+    "id": "prod_backpack",
+    "name": "Urban Daypack",
+    "description": "Water-resistant daypack with laptop compartment.",
+    "price": 59.99,
+    "imageUrl": "https://placehold.co/300x300/64748b/white?text=Backpack",
+    "category": "accessories"
+  },
+  {
+    "id": "prod_sunglasses",
+    "name": "Polarized Sunglasses",
+    "description": "UV400 polarized sunglasses with lightweight titanium frame.",
+    "price": 49.99,
+    "imageUrl": "https://placehold.co/300x300/f59e0b/white?text=Sunglasses",
+    "category": "accessories"
+  },
+  {
+    "id": "prod_water_bottle",
+    "name": "Insulated Water Bottle",
+    "description": "32oz double-wall insulated stainless steel bottle.",
+    "price": 24.99,
+    "imageUrl": "https://placehold.co/300x300/06b6d4/white?text=Bottle",
+    "category": "accessories"
+  },
+  {
+    "id": "prod_notebook",
+    "name": "Dotted Notebook",
+    "description": "A5 hardcover notebook with 192 dotted pages.",
+    "price": 14.99,
+    "imageUrl": "https://placehold.co/300x300/ec4899/white?text=Notebook",
+    "category": "stationery"
+  }
+]

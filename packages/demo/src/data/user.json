@@ -1,0 +1,35 @@
+{
+  "id": "user_1",
+  "name": "Alex Demo",
+  "email": "alex@example.com",
+  "addresses": [
+    {
+      "id": "addr_home",
+      "label": "Home",
+      "street": "123 Main St",
+      "city": "Portland",
+      "state": "OR",
+      "zip": "97201"
+    },
+    {
+      "id": "addr_work",
+      "label": "Work",
+      "street": "456 Tech Blvd, Suite 200",
+      "city": "Portland",
+      "state": "OR",
+      "zip": "97204"
+    }
+  ],
+  "paymentMethods": [
+    {
+      "id": "pm_visa_4242",
+      "label": "Visa ending in 4242",
+      "type": "visa"
+    },
+    {
+      "id": "pm_mc_8888",
+      "label": "Mastercard ending in 8888",
+      "type": "mastercard"
+    }
+  ]
+}
