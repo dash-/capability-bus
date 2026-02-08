@@ -143,7 +143,7 @@ export class CapabilityBus implements CapabilityBusReadonly {
     );
     if (!permitted) {
       const result = createErrorResult(requestId, 'FORBIDDEN', 'Insufficient permissions');
-      this.recordAudit(name, args, caller, requestId, result, startTime);
+      this.recordAudit(name, args, caller, requestId, result, startTime, idempotencyKey);
       return result as InvocationResult<T>;
     }
 
@@ -155,7 +155,7 @@ export class CapabilityBus implements CapabilityBusReadonly {
         'CONFLICT',
         `Capability "${name}" is currently executing (exclusive concurrency)`,
       );
-      this.recordAudit(name, args, caller, requestId, result, startTime);
+      this.recordAudit(name, args, caller, requestId, result, startTime, idempotencyKey);
       return result as InvocationResult<T>;
     }
 
@@ -174,7 +174,7 @@ export class CapabilityBus implements CapabilityBusReadonly {
             precheck.message,
             precheck.recoveryHint,
           );
-          this.recordAudit(name, args, caller, requestId, result, startTime);
+          this.recordAudit(name, args, caller, requestId, result, startTime, idempotencyKey);
           return result as InvocationResult<T>;
         }
       }
@@ -221,7 +221,7 @@ export class CapabilityBus implements CapabilityBusReadonly {
       const result = await chain();
 
       // 9. Record audit, emit event, cache idempotency
-      this.recordAudit(name, args, caller, requestId, result, startTime);
+      this.recordAudit(name, args, caller, requestId, result, startTime, idempotencyKey);
 
       // Only cache successful results — failed invocations should be retriable
       // with the same idempotency key rather than returning a cached error.
@@ -245,12 +245,14 @@ export class CapabilityBus implements CapabilityBusReadonly {
     requestId: string,
     result: InvocationResult,
     startTime: number,
+    idempotencyKey?: string,
   ): void {
     const record: AuditRecord = {
       invocation: {
         capability: name,
         arguments: args as Record<string, unknown>,
         requestId,
+        idempotencyKey,
         caller,
       },
       result,
