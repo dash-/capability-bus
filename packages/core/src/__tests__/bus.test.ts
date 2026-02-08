@@ -79,6 +79,18 @@ describe('CapabilityBus', () => {
         expect(result.code).toBe('NOT_FOUND');
       }
     });
+
+    it('records audit for NOT_FOUND', async () => {
+      const bus = makeBus();
+      await bus.invoke('nonexistent', {}, uiCaller);
+
+      const log = bus.getAuditLog();
+      expect(log).toHaveLength(1);
+      expect(log[0].result.status).toBe('error');
+      if (log[0].result.status === 'error') {
+        expect(log[0].result.code).toBe('NOT_FOUND');
+      }
+    });
   });
 
   describe('invoke - VALIDATION', () => {
@@ -105,6 +117,19 @@ describe('CapabilityBus', () => {
         expect(result.code).toBe('VALIDATION');
       }
     });
+
+    it('records audit for VALIDATION errors', async () => {
+      const bus = makeBus();
+      bus.register(makeCapability());
+      await bus.invoke('test.action', { value: 123 }, uiCaller);
+
+      const log = bus.getAuditLog();
+      expect(log).toHaveLength(1);
+      expect(log[0].result.status).toBe('error');
+      if (log[0].result.status === 'error') {
+        expect(log[0].result.code).toBe('VALIDATION');
+      }
+    });
   });
 
   describe('invoke - FORBIDDEN', () => {
@@ -123,6 +148,26 @@ describe('CapabilityBus', () => {
       expect(result.status).toBe('error');
       if (result.status === 'error') {
         expect(result.code).toBe('FORBIDDEN');
+      }
+    });
+
+    it('records audit for FORBIDDEN errors', async () => {
+      const bus = makeBus({
+        appContext: () => ({ permissions: ['user.authenticated'] }),
+      });
+      bus.register(
+        makeCapability({
+          permissions: ['user.authenticated', 'admin'],
+        }),
+      );
+
+      await bus.invoke('test.action', { value: 'x' }, uiCaller);
+
+      const log = bus.getAuditLog();
+      expect(log).toHaveLength(1);
+      expect(log[0].result.status).toBe('error');
+      if (log[0].result.status === 'error') {
+        expect(log[0].result.code).toBe('FORBIDDEN');
       }
     });
 
@@ -199,6 +244,38 @@ describe('CapabilityBus', () => {
       resolveFirst!();
       const firstResult = await first;
       expect(firstResult.status).toBe('success');
+    });
+
+    it('records audit for CONFLICT errors', async () => {
+      const bus = makeBus();
+      let resolveFirst: () => void;
+      const firstBlocks = new Promise<void>((r) => {
+        resolveFirst = r;
+      });
+
+      bus.register(
+        makeCapability({
+          concurrency: 'exclusive',
+          handler: async (input) => {
+            await firstBlocks;
+            return { result: `done:${input.value}` };
+          },
+        }),
+      );
+
+      const first = bus.invoke('test.action', { value: '1' }, uiCaller);
+      await bus.invoke('test.action', { value: '2' }, uiCaller);
+
+      // CONFLICT should be audited (first invocation hasn't finished yet)
+      const log = bus.getAuditLog();
+      expect(log).toHaveLength(1);
+      expect(log[0].result.status).toBe('error');
+      if (log[0].result.status === 'error') {
+        expect(log[0].result.code).toBe('CONFLICT');
+      }
+
+      resolveFirst!();
+      await first;
     });
 
     it('allows concurrent capabilities to run simultaneously', async () => {

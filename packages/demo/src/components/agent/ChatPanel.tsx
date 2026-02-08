@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { useCapabilityBus } from '@capability-bus/react';
 import { useConfirmation } from '@capability-bus/react';
-import { createConfirmationMiddleware } from '@capability-bus/core';
 import type { InvocationResult } from '@capability-bus/core';
 import { MockAgentService } from '../../agent/mock-agent.js';
 import type { AgentService, ConversationMessage } from '../../agent/agent-service.js';
@@ -39,6 +38,7 @@ export function ChatPanel() {
 
     const userMessage = input.trim();
     setInput('');
+    setToolCalls([]);
     setMessages((prev) => [...prev, { role: 'user', content: userMessage }]);
     setIsThinking(true);
     scrollToBottom();

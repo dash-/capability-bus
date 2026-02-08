@@ -702,12 +702,11 @@ The schema is versioned with semver. Breaking changes increment the major versio
 
 ## Reference Implementation
 
-> **Placeholder.** A companion repository and documentation site are planned to accompany this paper:
->
-> - **GitHub:** `github.com/[org]/capability-bus` — Core `CapabilityBus` class, React hooks (`useCapabilityBus`, `useAgentContext`), example capabilities, and a working demo application.
-> - **Documentation:** `[org].github.io/capability-bus` — Quickstart guide, API reference, integration examples for React/Vue/Svelte, and a tutorial for adding the Agent Bridge to an existing application.
->
-> These resources are not yet available. If you are interested in contributing or would like early access, please reach out to [contact information].
+The reference implementation accompanies this paper:
+
+- **GitHub:** [`github.com/dash-/capability-bus`](https://github.com/dash-/capability-bus) — Core `CapabilityBus` class, React hooks (`useCapabilityBus`, `useAgentContext`), example capabilities, and a working demo application.
+
+See the repository's [Quickstart Guide](../docs/quickstart.md), [API Reference](../docs/api-reference.md), [Integration Examples](../docs/integration-examples.md), and [Agent Bridge Tutorial](../docs/tutorial-agent-bridge.md).
 
 ---
 

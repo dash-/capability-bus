@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import type { CallerIdentity, InvocationResult, InvokeOptions } from '@capability-bus/core';
 import { useBusContext } from './context.js';
 
@@ -19,10 +19,10 @@ export function useCapability<T = unknown>(
   const [result, setResult] = useState<InvocationResult<T> | null>(null);
   const [error, setError] = useState<InvocationResult<T> | null>(null);
 
-  const caller: CallerIdentity = {
-    type: 'ui',
-    source: callerSource ?? capabilityName,
-  };
+  const caller: CallerIdentity = useMemo(
+    () => ({ type: 'ui' as const, source: callerSource ?? capabilityName }),
+    [callerSource, capabilityName],
+  );
 
   const invoke = useCallback(
     async (args: unknown, options?: InvokeOptions): Promise<InvocationResult<T>> => {
@@ -39,7 +39,7 @@ export function useCapability<T = unknown>(
         setIsLoading(false);
       }
     },
-    [bus, capabilityName, caller.source],
+    [bus, capabilityName, caller],
   );
 
   const reset = useCallback(() => {

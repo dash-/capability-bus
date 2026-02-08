@@ -44,7 +44,7 @@ export class MockAgentService implements AgentService {
 
     // Pattern: clear cart
     if (input.includes('clear') && input.includes('cart')) {
-      const result = await onToolCall({
+      await onToolCall({
         id: `mock_${Date.now()}`,
         name: 'cart.clear',
         arguments: {},

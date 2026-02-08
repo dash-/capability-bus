@@ -8,9 +8,11 @@ interface CacheEntry {
 export class InMemoryIdempotencyStore implements IdempotencyStore {
   private cache = new Map<string, CacheEntry>();
   private defaultTtl: number;
+  private sweepThreshold: number;
 
-  constructor(defaultTtlMs = 5 * 60 * 1000) {
+  constructor(defaultTtlMs = 5 * 60 * 1000, sweepThreshold = 1000) {
     this.defaultTtl = defaultTtlMs;
+    this.sweepThreshold = sweepThreshold;
   }
 
   get(key: string): InvocationResult | undefined {
@@ -28,6 +30,9 @@ export class InMemoryIdempotencyStore implements IdempotencyStore {
       result,
       expiresAt: Date.now() + (ttl ?? this.defaultTtl),
     });
+    if (this.cache.size > this.sweepThreshold) {
+      this.sweep();
+    }
   }
 
   has(key: string): boolean {
@@ -36,5 +41,14 @@ export class InMemoryIdempotencyStore implements IdempotencyStore {
 
   clear(): void {
     this.cache.clear();
+  }
+
+  sweep(): void {
+    const now = Date.now();
+    for (const [key, entry] of this.cache) {
+      if (now > entry.expiresAt) {
+        this.cache.delete(key);
+      }
+    }
   }
 }

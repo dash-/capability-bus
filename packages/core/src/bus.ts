@@ -24,9 +24,8 @@ import type {
 } from './types.js';
 import { generateManifest, manifestToToolDefinitions } from './manifest.js';
 
-let counter = 0;
 function defaultRequestId(): string {
-  return `req_${Date.now()}_${++counter}`;
+  return crypto.randomUUID();
 }
 
 export class CapabilityBus implements CapabilityBusReadonly {
@@ -116,6 +115,7 @@ export class CapabilityBus implements CapabilityBusReadonly {
     const capability = this.capabilities.get(name);
     if (!capability) {
       const result = createErrorResult(requestId, 'NOT_FOUND', `Unknown capability: ${name}`);
+      this.recordAudit(name, args, caller, requestId, result, startTime);
       return result as InvocationResult<T>;
     }
 
@@ -123,6 +123,7 @@ export class CapabilityBus implements CapabilityBusReadonly {
     const parsed = capability.input.safeParse(args);
     if (!parsed.success) {
       const result = createErrorResult(requestId, 'VALIDATION', parsed.error.message);
+      this.recordAudit(name, args, caller, requestId, result, startTime);
       return result as InvocationResult<T>;
     }
 
@@ -142,6 +143,7 @@ export class CapabilityBus implements CapabilityBusReadonly {
     );
     if (!permitted) {
       const result = createErrorResult(requestId, 'FORBIDDEN', 'Insufficient permissions');
+      this.recordAudit(name, args, caller, requestId, result, startTime);
       return result as InvocationResult<T>;
     }
 
@@ -153,6 +155,7 @@ export class CapabilityBus implements CapabilityBusReadonly {
         'CONFLICT',
         `Capability "${name}" is currently executing (exclusive concurrency)`,
       );
+      this.recordAudit(name, args, caller, requestId, result, startTime);
       return result as InvocationResult<T>;
     }
 
@@ -220,6 +223,8 @@ export class CapabilityBus implements CapabilityBusReadonly {
       // 9. Record audit, emit event, cache idempotency
       this.recordAudit(name, args, caller, requestId, result, startTime);
 
+      // Only cache successful results — failed invocations should be retriable
+      // with the same idempotency key rather than returning a cached error.
       if (idempotencyKey && result.status === 'success') {
         this.idempotencyStore.set(idempotencyKey, result);
       }

@@ -21,21 +21,24 @@ export function createCartCapabilities(
     permissions: [],
     concurrency: 'concurrent',
     handler: async (input) => {
-      const product = getState().products.find((p) => p.id === input.productId);
-      if (!product) throw new Error(`Product not found: ${input.productId}`);
-      dispatch({ type: 'CART_ADD', product, quantity: input.quantity });
-      // Read state after dispatch to get updated totals
       const state = getState();
-      const updatedCart = [...state.cart];
-      const existing = updatedCart.find((i) => i.product.id === input.productId);
-      if (existing) {
-        existing.quantity += input.quantity;
-      } else {
-        updatedCart.push({ product, quantity: input.quantity });
-      }
-      // Note: dispatch is async in React, so we compute the expected result
+      const product = state.products.find((p) => p.id === input.productId);
+      if (!product) throw new Error(`Product not found: ${input.productId}`);
+
+      // Compute expected result from current state before dispatching,
+      // since React's useReducer dispatch doesn't update stateRef synchronously.
+      const existing = state.cart.find((i) => i.product.id === input.productId);
+      const updatedCart = existing
+        ? state.cart.map((i) =>
+            i.product.id === input.productId
+              ? { ...i, quantity: i.quantity + input.quantity }
+              : i,
+          )
+        : [...state.cart, { product, quantity: input.quantity }];
       const total = updatedCart.reduce((sum, i) => sum + i.product.price * i.quantity, 0);
       const count = updatedCart.reduce((sum, i) => sum + i.quantity, 0);
+
+      dispatch({ type: 'CART_ADD', product, quantity: input.quantity });
       return { cartTotal: Math.round(total * 100) / 100, itemCount: count };
     },
   };
@@ -54,11 +57,12 @@ export function createCartCapabilities(
     permissions: [],
     concurrency: 'concurrent',
     handler: async (input) => {
-      dispatch({ type: 'CART_REMOVE', productId: input.productId });
       const state = getState();
       const updatedCart = state.cart.filter((i) => i.product.id !== input.productId);
       const total = updatedCart.reduce((sum, i) => sum + i.product.price * i.quantity, 0);
       const count = updatedCart.reduce((sum, i) => sum + i.quantity, 0);
+
+      dispatch({ type: 'CART_REMOVE', productId: input.productId });
       return { cartTotal: Math.round(total * 100) / 100, itemCount: count };
     },
   };
@@ -78,13 +82,14 @@ export function createCartCapabilities(
     permissions: [],
     concurrency: 'concurrent',
     handler: async (input) => {
-      dispatch({ type: 'CART_UPDATE_QUANTITY', productId: input.productId, quantity: input.quantity });
       const state = getState();
       const updatedCart = state.cart.map((i) =>
         i.product.id === input.productId ? { ...i, quantity: input.quantity } : i,
       );
       const total = updatedCart.reduce((sum, i) => sum + i.product.price * i.quantity, 0);
       const count = updatedCart.reduce((sum, i) => sum + i.quantity, 0);
+
+      dispatch({ type: 'CART_UPDATE_QUANTITY', productId: input.productId, quantity: input.quantity });
       return { cartTotal: Math.round(total * 100) / 100, itemCount: count };
     },
   };
