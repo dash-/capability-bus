@@ -1,5 +1,9 @@
 # Agent‑Ready Architecture: The Capability Bus Pattern
 
+**David Ash**
+github.com/dash-
+February 2026
+
 ---
 
 ## Executive Summary
