@@ -1,0 +1,19 @@
+{
+  "name": "capability-bus-monorepo",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter demo dev",
+    "build": "pnpm --filter @capability-bus/core build && pnpm --filter @capability-bus/react build && pnpm --filter demo build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
+  },
+  "devDependencies": {
+    "vitest": "^3.0.0",
+    "typescript": "^5.7.0"
+  }
+}
